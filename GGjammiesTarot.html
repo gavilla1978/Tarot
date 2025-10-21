@@ -9,8 +9,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         /* Custom Theme Colors */
         .tarot-bg { background-color: #0f172a; } /* Dark Blue/Slate */
-        .tarot-card-bg { background-color: #1e293b; } /* Slightly lighter slate */
-        .tarot-text { color: #f5f3ff; } /* Very light purple */
+        .tarot-card-bg { background-color: #141d2e; } /* SLIGHTLY DARKER for better contrast */
+        .tarot-text { color: #ffffff; } /* PURE WHITE for maximum contrast */
         .tarot-accent { color: #a855f7; } /* Primary Purple */
         .tarot-border { border-color: #4c1d95; } /* Darker Purple for borders */
         .tarot-shadow { box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3), 0 4px 6px -2px rgba(168, 85, 247, 0.1); }
@@ -85,26 +85,7 @@
             #reading-area.grid-cols-10 {
                 grid-template-columns: repeat(5, minmax(0, 1fr));
             }
-        }
-        @media (max-width: 767px) { /* Mobile layout for Celtic Cross */
-            #reading-area.grid-cols-10 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-            }
-            /* Card 1, 6, 7, 8, 9, 10 stack on the side or in sequence on mobile */
-            /* Simplified placement for mobile for readability */
-            #reading-area.grid-cols-10 > div:nth-child(1) { grid-column: span 3; } /* 1. Present */
-            #reading-area.grid-cols-10 > div:nth-child(2) { grid-column: span 3; } /* 2. Challenge */
-            #reading-area.grid-cols-10 > div:nth-child(3) { grid-column: span 3; } /* 3. Foundation */
-            #reading-area.grid-cols-10 > div:nth-child(4) { grid-column: span 3; } /* 4. Past */
-            #reading-area.grid-cols-10 > div:nth-child(5) { grid-column: span 3; } /* 5. Hopes/Fears */
-            #reading-area.grid-cols-10 > div:nth-child(6) { grid-column: span 3; } /* 6. Future */
-            #reading-area.grid-cols-10 > div:nth-child(7) { grid-column: span 3; } /* 7. Self */
-            #reading-area.grid-cols-10 > div:nth-child(8) { grid-column: span 3; } /* 8. Environment */
-            #reading-area.grid-cols-10 > div:nth-child(9) { grid-column: span 3; } /* 9. Hopes/Fears */
-            #reading-area.grid-cols-10 > div:nth-child(10) { grid-column: span 3; } /* 10. Outcome */
-        }
-        /* Adjustments for desktop Celtic Cross positioning */
-        @media (min-width: 768px) {
+            /* Adjustments for desktop Celtic Cross positioning */
             /* Position 1 & 2 are in the center cross */
             #reading-area.grid-cols-10 > div:nth-child(1),
             #reading-area.grid-cols-10 > div:nth-child(2) {
@@ -137,6 +118,22 @@
                 transform: rotate(90deg) scale(0.9); /* Crossing card */
                 z-index: 10;
             } 
+        }
+        @media (max-width: 767px) { /* Mobile layout for Celtic Cross */
+            #reading-area.grid-cols-10 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+            /* Simplified placement for mobile for readability */
+            #reading-area.grid-cols-10 > div:nth-child(1) { grid-column: span 3; } /* 1. Present */
+            #reading-area.grid-cols-10 > div:nth-child(2) { grid-column: span 3; } /* 2. Challenge */
+            #reading-area.grid-cols-10 > div:nth-child(3) { grid-column: span 3; } /* 3. Foundation */
+            #reading-area.grid-cols-10 > div:nth-child(4) { grid-column: span 3; } /* 4. Past */
+            #reading-area.grid-cols-10 > div:nth-child(5) { grid-column: span 3; } /* 5. Hopes/Fears */
+            #reading-area.grid-cols-10 > div:nth-child(6) { grid-column: span 3; } /* 6. Future */
+            #reading-area.grid-cols-10 > div:nth-child(7) { grid-column: span 3; } /* 7. Self */
+            #reading-area.grid-cols-10 > div:nth-child(8) { grid-column: span 3; } /* 8. Environment */
+            #reading-area.grid-cols-10 > div:nth-child(9) { grid-column: span 3; } /* 9. Hopes/Fears */
+            #reading-area.grid-cols-10 > div:nth-child(10) { grid-column: span 3; } /* 10. Outcome */
         }
 
     </style>
@@ -234,7 +231,7 @@
     <div id="card-modal" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-70">
         <div id="modal-content" class="modal-content w-full max-w-xl tarot-card-bg p-8 rounded-2xl tarot-shadow relative">
             <button onclick="closeDetails()" class="absolute top-3 right-3 text-gray-400 hover:text-red-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24:24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24:24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y1="18"></line></svg>
             </button>
             <div class="text-center mb-4">
                 <p id="modal-card-icon" class="card-icon mb-2"></p>
@@ -243,8 +240,8 @@
             </div>
 
             <div class="space-y-6">
-                <!-- Elemental/Numeric Context (New) -->
-                <div id="modal-context-info" class="p-3 bg-gray-800 rounded-lg text-sm text-center border border-purple-700/50"></div>
+                <!-- Elemental/Numeric Context (text-gray-200 added here for contrast fix) -->
+                <div id="modal-context-info" class="p-3 bg-gray-800 rounded-lg text-sm text-center border border-purple-700/50 text-gray-200 hidden"></div>
                 
                 <!-- Contextual Reading Message (Displays position if drawn from a spread) -->
                 <p id="modal-reading-context" class="text-center text-base italic text-purple-300 border-b border-purple-700/50 pb-2"></p>
@@ -608,6 +605,9 @@
             modalIcon.classList.remove('reversed'); // Reset rotation
             modalReadingContext.textContent = contextMessage;
             modalContextInfo.innerHTML = ''; // Clear context info
+            
+            // Hide the context info section by default, only show for Minor Arcana
+            modalContextInfo.classList.add('hidden'); 
 
             const idDisplay = card.arcana.includes('Major') ? (card.id === 0 ? '0' : getRomanNumeral(card.id)) : '';
             
@@ -624,7 +624,7 @@
             modalTitle.textContent = titleText;
             modalKeywords.textContent = keywordText;
             
-            // Generate Minor Arcana/Context Info
+            // Generate Minor Arcana Context Info
             if (card.arcana.includes('Minor')) {
                 const [suit, element] = card.arcana.split(' ');
                 const rank = getMinorArcanaRank(card.name);
@@ -636,23 +636,23 @@
                     card.arcana.includes("Swords") ? 'text-red-300' :
                     'text-green-300';
                 
+                // Show the context box for Minor Arcana only
+                modalContextInfo.classList.remove('hidden'); 
                 modalContextInfo.innerHTML = `
                     <span class="font-bold">Suit: ${suit}</span> 
                     (<span class="${elementalColor} font-extrabold">${element.replace(/[\(\)]/g, '')}</span>) — 
                     <span class="italic">${rankContext}</span>
                 `;
-            } else {
-                modalContextInfo.innerHTML = `<span class="font-bold">Major Arcana</span> — Represents significant life lessons and karmic influences.`;
             }
 
-
             // Highlight the relevant meaning
+            // FIX: Increased opacity and used a slightly lighter text-gray-300 for better contrast on "Not Active" text.
             if (isReversed) {
-                modalUpright.innerHTML = `(Upright Meaning - Not Active): <span class="opacity-50">${card.upright}</span>`;
-                modalReversed.innerHTML = `(Reversed Meaning - Active): <span class="font-bold">${card.reversed}</span>`;
+                modalUpright.innerHTML = `(Upright Meaning - Not Active): <span class="opacity-70 text-gray-300">${card.upright}</span>`;
+                modalReversed.innerHTML = `(Reversed Meaning - Active): <span class="font-bold text-white">${card.reversed}</span>`;
             } else {
-                modalUpright.innerHTML = `(Upright Meaning - Active): <span class="font-bold">${card.upright}</span>`;
-                modalReversed.innerHTML = `(Reversed Meaning - Not Active): <span class="opacity-50">${card.reversed}</span>`;
+                modalUpright.innerHTML = `(Upright Meaning - Active): <span class="font-bold text-white">${card.upright}</span>`;
+                modalReversed.innerHTML = `(Reversed Meaning - Not Active): <span class="opacity-70 text-gray-300">${card.reversed}</span>`;
             }
         }
 
@@ -720,9 +720,10 @@
                 cardContainer.innerHTML = `
                     <p class="${positionLabelClass} w-full">${spreadItem.position}</p>
                     <div class="flex flex-col items-center justify-center p-2 h-full w-full">
-                        <p class="text-xl font-semibold tarot-accent mb-1">${spreadItem.card.name}${spreadItem.isReversed ? ' (R)' : ''}</p>
+                        <p class="text-xl font-semibold tarot-text mb-1">${spreadItem.card.name}${spreadItem.isReversed ? ' (R)' : ''}</p>
                         <p class="card-icon text-5xl my-2 ${spreadItem.isReversed ? 'reversed' : ''}">${spreadItem.card.icon}</p>
-                        <span class="text-sm font-light text-gray-400">${spreadItem.card.arcana.split(' ')[0]}</span>
+                        <!-- Used tarot-text (now pure white) instead of text-gray-400 for best visibility -->
+                        <span class="text-sm font-light tarot-text opacity-80">${spreadItem.card.arcana.split(' ')[0]}</span>
                     </div>
                 `;
                 readingArea.appendChild(cardContainer);
@@ -885,3 +886,4 @@
     </script>
 </body>
 </html>
+
