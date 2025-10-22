@@ -81,15 +81,34 @@
             grid-template-columns: repeat(5, minmax(0, 1fr)); 
             gap: 1rem 0.5rem;
         }
+        
+        /* Learning Mode Specific Styles for better readability in grid */
+        .learning-mode-card {
+            min-height: 200px;
+            text-align: left;
+            padding: 1rem;
+        }
+        
+        @media (min-width: 1024px) { /* lg breakpoint - reduce grid size for learning view */
+             #card-grid.learning-mode {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) { /* md breakpoint */
+            #card-grid.learning-mode {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+        @media (max-width: 767px) { /* Mobile layout for Learning View */
+            #card-grid.learning-mode {
+                grid-template-columns: repeat(1, minmax(0, 1fr));
+            }
+        }
+
+        /* Celtic Cross positioning fixes */
         @media (min-width: 768px) { /* md breakpoint */
             #reading-area.grid-cols-10 {
                 grid-template-columns: repeat(5, minmax(0, 1fr));
-            }
-            /* Adjustments for desktop Celtic Cross positioning */
-            /* Position 1 & 2 are in the center cross */
-            #reading-area.grid-cols-10 > div:nth-child(1),
-            #reading-area.grid-cols-10 > div:nth-child(2) {
-                grid-column: span 1; /* Keep them single columns */
             }
             /* Positions 3, 4, 5, 6 form the surrounding arm */
             #reading-area.grid-cols-10 > div:nth-child(3) { grid-column: 2; grid-row: 3; } /* Below 1 */
@@ -206,11 +225,20 @@
 
         <!-- Search Input -->
         <h2 class="text-xl sm:text-2xl font-bold mb-4 border-b border-purple-700 pb-2">Deck Index & Search</h2>
-        <div class="mb-8">
+        
+        <!-- NEW: Learning Mode and Search Container -->
+        <div class="mb-8 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+             <button 
+                id="learning-mode-toggle"
+                onclick="toggleLearningMode()" 
+                class="flex-shrink-0 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors shadow-md shadow-gray-500/50 text-sm sm:text-base"
+             >
+                Toggle Learning View 📚 (Off)
+            </button>
             <input
                 type="text"
                 id="card-search"
-                placeholder="Search card name, element (Fire, Water, Air, Earth), suit, number (1-21), or court rank"
+                placeholder="Search card name, element, suit, number, or court rank"
                 class="w-full p-3 rounded-xl bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                 oninput="filterCards(event.target.value)"
             />
@@ -271,6 +299,7 @@
         
         let currentSpread = [];
         let currentSpreadType = 'one'; // Store the current spread type globally
+        let isLearningMode = false; // NEW: State for the learning mode toggle
         const SAVED_READINGS_KEY = 'tarot_saved_readings';
         const readingArea = document.getElementById('reading-area');
         
@@ -439,6 +468,7 @@
         const savedReadingsList = document.getElementById('saved-readings-list');
         const noReadingsMsg = document.getElementById('no-readings-msg');
         const spreadTypeSelector = document.getElementById('spread-type');
+        const learningModeToggle = document.getElementById('learning-mode-toggle');
 
         // Utility function for showing temporary feedback (replacing the need for alerts)
         const showToast = (message, duration = 3000) => {
@@ -450,6 +480,31 @@
                 toast.classList.remove('show');
             }, duration);
         };
+        
+        // NEW: Toggle function for Learning Mode
+        const toggleLearningMode = () => {
+            isLearningMode = !isLearningMode;
+            
+            // Update button text and color
+            if (isLearningMode) {
+                learningModeToggle.textContent = 'Toggle Learning View 📚 (On)';
+                learningModeToggle.classList.replace('bg-gray-700', 'bg-purple-600');
+                learningModeToggle.classList.replace('shadow-gray-500/50', 'shadow-purple-500/50');
+                cardGrid.classList.add('learning-mode');
+                showToast("Learning View is ON: Expanded card meanings for study.", 3000);
+            } else {
+                learningModeToggle.textContent = 'Toggle Learning View 📚 (Off)';
+                learningModeToggle.classList.replace('bg-purple-600', 'bg-gray-700');
+                learningModeToggle.classList.replace('shadow-purple-500/50', 'shadow-gray-500/50');
+                cardGrid.classList.remove('learning-mode');
+                showToast("Learning View is OFF: Compact card view restored.", 3000);
+            }
+            
+            // Re-render the cards with the current search filter applied
+            const searchTerm = document.getElementById('card-search').value;
+            filterCards(searchTerm);
+        };
+
 
         // --- Card Index and Display Logic ---
 
@@ -465,16 +520,49 @@
             else if (card.arcana.includes("Swords")) { indicatorClass = 'text-red-400'; elementName = 'Air'; }
             else if (card.arcana.includes("Pentacles")) { indicatorClass = 'text-green-400'; elementName = 'Earth'; }
             
-            element.className = 'tarot-card-bg p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-700/70 transition-all duration-300 transform hover:scale-105 border tarot-border text-center';
             element.onclick = () => showCardDetails(card.name);
             
             const arcanaLabel = card.arcana === 'Major' ? card.arcana.toUpperCase() : `${card.arcana.split(' ')[0].toUpperCase()} (${elementName})`;
 
-            element.innerHTML = `
-                <p class="text-3xl mb-1">${card.icon}</p>
-                <p class="text-xs font-light ${indicatorClass} mb-1">${arcanaLabel}</p>
-                <p class="text-lg font-semibold tarot-accent leading-tight">${card.name}</p>
-            `;
+            // Conditional rendering based on learning mode
+            if (isLearningMode) {
+                element.className = 'tarot-card-bg learning-mode-card rounded-xl shadow-lg cursor-pointer hover:bg-gray-700/70 transition-all duration-300 transform hover:scale-[1.02] border tarot-border';
+                
+                let contextHtml = '';
+                if (card.arcana.includes('Minor')) {
+                    const rank = getMinorArcanaRank(card.name);
+                    const rankContext = MINOR_RANK_CONTEXT[rank] || '';
+                    contextHtml = `
+                        <p class="text-xs font-bold text-purple-300 mt-1 mb-1 leading-tight">
+                            ${rank.toUpperCase()} Context: <span class="font-normal text-gray-400">${rankContext}</span>
+                        </p>
+                    `;
+                }
+
+                element.innerHTML = `
+                    <div class="flex items-center space-x-3 mb-2">
+                        <p class="text-4xl">${card.icon}</p>
+                        <div>
+                            <p class="text-sm font-light ${indicatorClass}">${arcanaLabel}</p>
+                            <p class="text-xl font-bold tarot-accent leading-tight">${card.name}</p>
+                        </div>
+                    </div>
+                    ${contextHtml}
+                    <div class="border-t border-gray-700 pt-2 mt-2">
+                        <p class="text-xs font-semibold text-white mb-1">Core Keywords:</p>
+                        <p class="text-sm text-gray-300 italic">${card.keywords}</p>
+                    </div>
+                `;
+
+            } else {
+                // Default compact mode
+                element.className = 'tarot-card-bg p-4 rounded-xl shadow-md cursor-pointer hover:bg-gray-700/70 transition-all duration-300 transform hover:scale-105 border tarot-border text-center';
+                element.innerHTML = `
+                    <p class="text-3xl mb-1">${card.icon}</p>
+                    <p class="text-xs font-light ${indicatorClass} mb-1">${arcanaLabel}</p>
+                    <p class="text-lg font-semibold tarot-accent leading-tight">${card.name}</p>
+                `;
+            }
             return element;
         };
 
@@ -483,6 +571,14 @@
             cardGrid.innerHTML = '';
             const lowerCaseSearch = searchTerm.toLowerCase().trim();
             
+            // Set the grid columns based on learning mode
+            if (isLearningMode) {
+                 // The CSS handles responsive columns for 'learning-mode'
+            } else {
+                 cardGrid.className = 'grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6';
+            }
+
+
             if (filteredCards.length === 0) {
                 statusMessage.textContent = `No cards found matching "${searchTerm}".`;
                 return;
@@ -490,8 +586,8 @@
 
             statusMessage.textContent = `Displaying ${filteredCards.length} of 78 cards.`;
 
-            // If the search term is active, just render a single continuous grid.
-            if (lowerCaseSearch !== '') {
+            // If the search term is active, or if we are in learning mode, just render a single continuous grid.
+            if (lowerCaseSearch !== '' || isLearningMode) {
                 filteredCards.forEach(card => cardGrid.appendChild(createCardElement(card)));
                 return;
             }
@@ -883,6 +979,7 @@
         window.saveCurrentReading = saveCurrentReading;
         window.loadAndDisplayReading = loadAndDisplayReading;
         window.deleteReading = deleteReading;
+        window.toggleLearningMode = toggleLearningMode; // Export the new function
     </script>
 </body>
 </html>
